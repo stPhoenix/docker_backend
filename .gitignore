@@ -5,3 +5,4 @@ htmlcov/
 *.log
 *.sqlite3
 __pycache__/
+.vscode/
