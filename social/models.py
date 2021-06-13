@@ -12,9 +12,9 @@ class User(AbstractBaseUser):
 
     subscriptions = models.ManyToManyField('self', symmetrical=False)
 
-class SubscriptionRequestModel(BaseDateModel)):
+class SubscriptionRequestModel(BaseDateModel):
     author = models.ForeignKey(User, related_name="+")
-    target = models.ForeignKey(Userm related_name="subscription_requests") 
+    target = models.ForeignKey(User, related_name="subscription_requests") 
 
 class SystemMessageModel(BaseDateModel):
     text = models.CharField(max_length=120, null=False)
