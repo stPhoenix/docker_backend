@@ -1,19 +1,24 @@
 from rest_framework import serializers
 
-from backend.social.models import UserModel, SubscriptionRequestModel, SystemMessageModel
+from social.models import UserModel, SubscriptionRequestModel, SystemMessageModel
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ("username", "email", "avatar", "banner")
+        fields = ("__all__")
 
-class SubscriptionRequestSerializer(serializers.HyperlinkedModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        exclude = ("subscriptions", "last_login")
+
+class SubscriptionRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubscriptionRequestModel
         fields = ("__all__")
 
-class SystemMessageSerializer(serializers.HyperlinkedModelSerializer):
+class SystemMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = SystemMessageModel
         fields = ("__all__")

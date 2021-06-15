@@ -3,18 +3,11 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework.response import Response
 
-from backend.social.models import UserModel, SubscriptionRequestModel, SystemMessageModel
-from backend.social.serializers import UserSerializer, SubscriptionRequestSerializer, SystemMessageSerializer
-from backend.social.permissions import IsAuthorOrReadOnlyPermission, IsTargetPermission
+from social.models import UserModel, SubscriptionRequestModel, SystemMessageModel
+from social.serializers import UserSerializer, SubscriptionRequestSerializer, SystemMessageSerializer
+from social.permissions import IsAuthorOrReadOnlyPermission, IsTargetPermission
 
 # Create your views here.
-
-
-class UserViewSet(ModelViewSet):
-    queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated, IsAuthorOrReadOnlyPermission)
-
 
 class SubscriptionRequestViewSet(ModelViewSet):
     serializer_class = SubscriptionRequestSerializer
@@ -30,7 +23,7 @@ class SubscriptionRequestViewSet(ModelViewSet):
 
     def answer_sub_request(self, request):
         obj = self.get_object()
-        message = "User rejected your subscirption request"
+        message = "User rejected your subscription request"
         if request.data["answer"] == "True":
             obj.author.subscriptions.add(request.user)
             message = "User accepted your subscription request"

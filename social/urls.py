@@ -4,14 +4,17 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from rest_framework.routers import DefaultRouter
-from backend.social.views import UserViewSet
+
+from social.views import  SubscriptionRequestViewSet, SystemMessageViewset
 
 
 router = DefaultRouter()
-router.register("users", UserViewSet)
+router.register(r"subscriptions", viewset=SubscriptionRequestViewSet, basename="subscriptions")
+router.register(r"messages", viewset=SystemMessageViewset, basename="messages")
 
 urlpatterns = [
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("", include("djoser.urls")),
+    path("", include('djoser.urls.authtoken')),
+    path("", include("djoser.urls.jwt")),
     path("", include(router.urls)),
 ]
