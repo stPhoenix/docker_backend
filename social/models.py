@@ -23,6 +23,7 @@ class UserModel(AbstractBaseUser):
     banner = models.ImageField(upload_to="banners/")
     username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(unique=True)
+    is_staff = models.BooleanField(default=False)
 
     objects = UserAccountManager()
 

@@ -1,14 +1,15 @@
 from rest_framework import serializers
+from djoser.serializers import UserCreateSerializer, UserSerializer
 
 from social.models import UserModel, SubscriptionRequestModel, SystemMessageModel
 
 
-class UserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(UserSerializer):
     class Meta:
         model = UserModel
-        fields = ("__all__")
+        exclude = ("password", "last_login")
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = UserModel
         exclude = ("subscriptions", "last_login")

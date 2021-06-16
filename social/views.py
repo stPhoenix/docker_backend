@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from social.models import UserModel, SubscriptionRequestModel, SystemMessageModel
-from social.serializers import UserSerializer, SubscriptionRequestSerializer, SystemMessageSerializer
+from social.serializers import CustomUserSerializer, SubscriptionRequestSerializer, SystemMessageSerializer
 from social.permissions import IsAuthorOrReadOnlyPermission, IsTargetPermission
 
 # Create your views here.
@@ -35,7 +35,7 @@ class SystemMessageViewset(ModelViewSet):
     permission_classes = (IsAuthenticated, IsTargetPermission)
 
     def get_queryset(self):
-        return self.user.system_messages.all()
+        return self.request.user.system_messages.all()
 
     def create(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

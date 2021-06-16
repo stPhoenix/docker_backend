@@ -126,7 +126,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/api/static/'
 
 MEDIA_ROOT = Path.joinpath(BASE_DIR, 'media/')
 
@@ -138,8 +138,10 @@ AUTH_USER_MODEL = 'social.UserModel'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
@@ -150,11 +152,10 @@ REST_FRAMEWORK = {
 
 DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
-    'TOKEN_MODEL': None,
     'SERIALIZERS': {
-        'current_user': 'social.serializers.UserSerializer',
-        'user': 'social.serializers.UserSerializer',
-        'user_create': 'social.serializers.UserCreateSerializer',
+        'current_user': 'social.serializers.CustomUserSerializer',
+        'user': 'social.serializers.CustomUserSerializer',
+        'user_create': 'social.serializers.CustomUserCreateSerializer',
 
     },
 }
