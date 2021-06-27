@@ -5,12 +5,13 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.routers import DefaultRouter
 
-from social.views import  SubscriptionRequestViewSet, SystemMessageViewset
+from social.views import  MySubsRequestsViewSet, ToMeSubsRequestsViewSet
 
 
 router = DefaultRouter()
-router.register(r"subscriptions", viewset=SubscriptionRequestViewSet, basename="subscriptions")
-router.register(r"messages", viewset=SystemMessageViewset, basename="messages")
+router.register(r"subscriptions/my", viewset=MySubsRequestsViewSet, basename="my_subscriptions")
+router.register(r"subscriptions/to-me", viewset=ToMeSubsRequestsViewSet, basename="my_subscriptions")
+
 
 urlpatterns = [
     path("", include("djoser.urls")),

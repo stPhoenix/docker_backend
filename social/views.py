@@ -2,40 +2,47 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework import serializers
 
-from social.models import UserModel, SubscriptionRequestModel, SystemMessageModel
-from social.serializers import CustomUserSerializer, SubscriptionRequestSerializer, SystemMessageSerializer
+from social.models import UserModel, SubscriptionRequestModel
+from social.serializers import CustomUserSerializer, SubscriptionRequestSerializer
 from social.permissions import IsAuthorOrReadOnlyPermission, IsTargetPermission
 
 # Create your views here.
 
-class SubscriptionRequestViewSet(ModelViewSet):
+class SubscriptionRequestBaseViewSet(ModelViewSet):
     serializer_class = SubscriptionRequestSerializer
     permission_classes = (IsAuthenticated, IsTargetPermission)
 
+    def perform_update(self, serializer):
+        if serializer.validated_data["status"] == SubscriptionRequestModel.Statuses.ACCEPTED:
+            print("Accept")
+            serializer.instance.accept()
+        elif serializer.validated_data["status"] == SubscriptionRequestModel.Statuses.DENIED:
+            serializer.instance.deny()
+        return super().perform_update(serializer)
+
+    def perform_create(self, serializer):
+        target = serializer.validated_data["target"]
+
+        if target == self.request.user:
+            raise serializers.ValidationError("Can't send request to myself")
+
+        already_sent = SubscriptionRequestModel.objects.filter(target=target).filter(author=self.request.user)
+        if len(already_sent) != 0:
+            raise serializers.ValidationError("Request already exists")
+        
+        serializer.validated_data["author"] = self.request.user
+        return super().perform_create(serializer)
+
+class MySubsRequestsViewSet(SubscriptionRequestBaseViewSet):
+    
     def get_queryset(self):
-        return self.user.subscription_requests.all()
+        return self.request.user.my_requests.all()
 
-    def destroy(self, request, *args, **kwargs):
-        self.answer_sub_request(request)
-
-        return super(SubscriptionRequestViewSet, self).destroy(request, *args, **kwargs)
-
-    def answer_sub_request(self, request):
-        obj = self.get_object()
-        message = "User rejected your subscription request"
-        if request.data["answer"] == "True":
-            obj.author.subscriptions.add(request.user)
-            message = "User accepted your subscription request"
-        SystemMessageModel.objects.create(target=obj.target, text=message)
-
-
-class SystemMessageViewset(ModelViewSet):
-    serialzer_class = SystemMessageSerializer
-    permission_classes = (IsAuthenticated, IsTargetPermission)
-
-    def get_queryset(self):
-        return self.request.user.system_messages.all()
-
+class ToMeSubsRequestsViewSet(SubscriptionRequestBaseViewSet):
     def create(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def get_queryset(self):
+        return self.request.user.subscription_requests.all()

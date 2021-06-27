@@ -9,8 +9,8 @@ class UserAccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password):
-        user = self.create_user(email, username, password)
+    def create_superuser(self, email, username, avatar, banner, password=None):
+        user = self.create_user(email, username, avatar, banner, password)
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -36,19 +36,34 @@ class UserModel(AbstractBaseUser):
 class BaseDateModel(models.Model):
     created = models.DateField(auto_now_add=True)
     updated = models.DateField(auto_now=True)
+    
+    class Meta:
+        abstract = True
 
 
-class BaseTargetModel(BaseDateModel):
-    target_related_name = "target_set"
-    target = models.ForeignKey(UserModel, related_name=target_related_name, on_delete=models.CASCADE)
 
+class SubscriptionRequestModel(BaseDateModel):
+    class Statuses(models.IntegerChoices):
+        PENDING = 1, "PENDING"
+        ACCEPTED = 2, "ACCEPTED"
+        DENIED = 3, "DENIED"
+    status = models.PositiveSmallIntegerField(
+        choices=Statuses.choices,
+        default=Statuses.PENDING,
+    )
+    target = models.ForeignKey(UserModel, related_name="subscription_requests", on_delete=models.CASCADE)
+    author = models.ForeignKey(UserModel, related_name="my_requests", on_delete=models.CASCADE)
 
-class SubscriptionRequestModel(BaseTargetModel):
-    target_related_name = "subscription_requests"
-    author = models.ForeignKey(UserModel, related_name="+", on_delete=models.CASCADE)
+    class Meta:
+        ordering = ("-created",)
 
+    def accept(self):
+        if self.target not in self.author.subscriptions.all():
+            self.author.subscriptions.add(self.target)
+        self.status = self.Statuses.ACCEPTED
+        self.save(update_fields=("status",))
 
-class SystemMessageModel(BaseTargetModel):
-    text = models.CharField(max_length=120, null=False)
-    read = models.BooleanField(default=False)
-    target_related_name = "system_messages"
+    def deny(self):
+        self.status = self.Statuses.DENIED
+        self.save(update_fields=("status",))
+
