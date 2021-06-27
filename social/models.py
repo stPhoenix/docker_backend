@@ -1,10 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+from base.models import BaseDateModel
+
 # Create your models here.
+
+
 class UserAccountManager(BaseUserManager):
     def create_user(self, email, username, avatar, banner, password=None):
-        user = self.model(email=email, username=username, avatar=avatar, banner=banner)
+        user = self.model(email=email, username=username,
+                          avatar=avatar, banner=banner)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -17,6 +22,7 @@ class UserAccountManager(BaseUserManager):
 
     def get_by_natural_key(self, username_):
         return self.get(username=username_)
+
 
 class UserModel(AbstractBaseUser):
     avatar = models.ImageField(upload_to="avatars/")
@@ -33,14 +39,6 @@ class UserModel(AbstractBaseUser):
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ("email", "avatar", "banner", "password")
 
-class BaseDateModel(models.Model):
-    created = models.DateField(auto_now_add=True)
-    updated = models.DateField(auto_now=True)
-    
-    class Meta:
-        abstract = True
-
-
 
 class SubscriptionRequestModel(BaseDateModel):
     class Statuses(models.IntegerChoices):
@@ -51,8 +49,10 @@ class SubscriptionRequestModel(BaseDateModel):
         choices=Statuses.choices,
         default=Statuses.PENDING,
     )
-    target = models.ForeignKey(UserModel, related_name="subscription_requests", on_delete=models.CASCADE)
-    author = models.ForeignKey(UserModel, related_name="my_requests", on_delete=models.CASCADE)
+    target = models.ForeignKey(
+        UserModel, related_name="subscription_requests", on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        UserModel, related_name="my_requests", on_delete=models.CASCADE)
 
     class Meta:
         ordering = ("-created",)
@@ -66,4 +66,3 @@ class SubscriptionRequestModel(BaseDateModel):
     def deny(self):
         self.status = self.Statuses.DENIED
         self.save(update_fields=("status",))
-
