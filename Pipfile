@@ -10,6 +10,9 @@ django = "*"
 django-environ = "*"
 djangorestframework = "*"
 psycopg2-binary = "*"
+djangorestframework-simplejwt = "*"
+pillow = "*"
+djoser = "*"
 
 [requires]
 python_version = "3.8"
