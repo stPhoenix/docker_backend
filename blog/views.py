@@ -3,8 +3,9 @@ from django.db.models import Avg, Count
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
+from rest_framework.serializers import ValidationError
 
-from blog.serializers import PostSerializer, CommentSerializer, RateSerializer, AddRateSerializer
+from blog.serializers import PostSerializer, CommentSerializer, RateSerializer
 from blog.models import PostModel, CommentModel, RateModel
 from blog.permissions import IsAuthorOrReadOnlyPermission, IsAuthorOnlyPermission
 
@@ -32,6 +33,9 @@ class CommentViewSet(ModelViewSet):
 
     def get_queryset(self):
         return CommentModel.objects.filter(author = self.request.user)
+    def perform_create(self, serializer):
+        serializer.validated_data["author"] = self.request.user
+        return super().perform_create(serializer)
 
 
 class RateViewSet(ModelViewSet):
@@ -41,6 +45,9 @@ class RateViewSet(ModelViewSet):
     def get_queryset(self):
         return RateModel.objects.filter(author = self.request.user)
     
-    def create(self, request, *args, **kwargs):
-        self.serializer_class = AddRateSerializer
-        return super().create(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.validated_data["author"] = self.request.user
+        rates = RateModel.objects.filter(author = serializer.validated_data["author"])
+        if len(rates) != 0 :
+            raise ValidationError("You've already rated this post")
+        return super().perform_create(serializer)
