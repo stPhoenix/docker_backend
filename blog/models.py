@@ -12,14 +12,20 @@ class PostModel(BaseTextDateModel):
     )
     title = models.CharField(max_length=120, default="Post Title")
 
+    class Meta:
+        ordering = ("-created",)
+
 
 class CommentModel(BaseTextDateModel):
     author = models.ForeignKey(
-        UserModel, related_name="comments", on_delete=models.SET_NULL, null = True
+        UserModel, related_name="comments", on_delete=models.SET_NULL, null=True
     )
     post = models.ForeignKey(
         PostModel, related_name="comments", on_delete=models.CASCADE
     )
+
+    class Meta:
+        ordering = ("-created",)
 
 
 class RateModel(BaseDateModel):
@@ -30,6 +36,13 @@ class RateModel(BaseDateModel):
         GOOD = 4, "GOOD"
         GREAT = 5, "GREAT"
 
-    rate = models.PositiveSmallIntegerField(choices = Marks.choices, default=Marks.MINIMAL)
+    rate = models.PositiveSmallIntegerField(
+        choices=Marks.choices, default=Marks.MINIMAL
+    )
     post = models.ForeignKey(PostModel, related_name="rating", on_delete=models.CASCADE)
-    author = models.ForeignKey(UserModel, related_name="+", on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(
+        UserModel, related_name="+", on_delete=models.SET_NULL, null=True
+    )
+
+    class Meta:
+        ordering = ("-created",)

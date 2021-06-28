@@ -2,12 +2,20 @@ from rest_framework import serializers
 
 from blog.models import PostModel, CommentModel, RateModel
 
-class PostSerializer(serializers.ModelSerializer):
+class ShortPostSerializer(serializers.ModelSerializer):
     comments__count = serializers.IntegerField(read_only=True)
     rating__rate__avg = serializers.IntegerField(read_only=True)
     rating__count = serializers.IntegerField(read_only=True)
 
+    avatar = serializers.ImageField(source='author.avatar', read_only=True)
+    banner = serializers.ImageField(source='author.banner', read_only=True)
 
+    class Meta:
+        model = PostModel
+        exclude = ("text",)
+        read_only_fields= ("author",)
+
+class DetailPostSerializer(ShortPostSerializer):
     class Meta:
         model = PostModel
         fields = ("__all__")
