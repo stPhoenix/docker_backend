@@ -9,6 +9,7 @@ class ShortPostSerializer(serializers.ModelSerializer):
 
     avatar = serializers.ImageField(source='author.avatar', read_only=True)
     banner = serializers.ImageField(source='author.banner', read_only=True)
+    author_name = serializers.CharField(source='author.username', read_only=True)
 
     class Meta:
         model = PostModel
