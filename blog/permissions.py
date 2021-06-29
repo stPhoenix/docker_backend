@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthenticated
 
 
 class IsAuthorOrReadOnlyPermission(BasePermission):
@@ -8,9 +8,14 @@ class IsAuthorOrReadOnlyPermission(BasePermission):
             condition = True
         else:
             condition = request.user == obj.author
-        
+
         return condition
+
 
 class IsAuthorOnlyPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user == obj.author
+
+
+def isSubscriberPermission(author, request):
+    return author in request.user.subscriptions.all()
