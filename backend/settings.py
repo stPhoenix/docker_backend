@@ -49,9 +49,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'blog',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -158,3 +161,6 @@ DJOSER = {
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
 }
+
+# To allow requests from different ip
+CORS_ORIGIN_ALLOW_ALL = True
