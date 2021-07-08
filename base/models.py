@@ -7,3 +7,9 @@ class BaseDateModel(models.Model):
 
     class Meta:
         abstract = True
+
+class BaseTextDateModel(BaseDateModel):
+    text = models.TextField()
+    
+    class Meta:
+        abstract = True
