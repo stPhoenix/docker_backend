@@ -131,6 +131,8 @@ USE_TZ = True
 
 STATIC_URL = '/api/static/'
 
+MEDIA_URL = '/api/media/'
+
 MEDIA_ROOT = Path.joinpath(BASE_DIR, 'media/')
 
 # Default primary key field type
