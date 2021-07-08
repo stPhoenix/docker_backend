@@ -5,7 +5,11 @@ from rest_framework.viewsets import ModelViewSet
 
 from social.models import SubscriptionRequestModel, UserModel
 from social.permissions import IsAuthorOrReadOnlyPermission, IsTargetPermission
-from social.serializers import CustomUserSerializer, SubscriptionRequestSerializer
+from social.serializers import (
+    SubscriptionRequestSerializer,
+    MySubscriptionRequestSerializer,
+    ToMeSubscriptionRequestSerializer,
+)
 
 # Create your views here.
 
@@ -45,6 +49,8 @@ class SubscriptionRequestBaseViewSet(ModelViewSet):
 
 
 class MySubsRequestsViewSet(SubscriptionRequestBaseViewSet):
+    serializer_class = MySubscriptionRequestSerializer
+
     def destroy(self, request, *args, **kwargs):
         self.permission_classes = (IsAuthenticated, IsAuthorOrReadOnlyPermission)
         return super(MySubsRequestsViewSet, self).destroy(request, *args, **kwargs)
@@ -54,6 +60,8 @@ class MySubsRequestsViewSet(SubscriptionRequestBaseViewSet):
 
 
 class ToMeSubsRequestsViewSet(SubscriptionRequestBaseViewSet):
+    serializer_class = ToMeSubscriptionRequestSerializer
+
     def create(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
