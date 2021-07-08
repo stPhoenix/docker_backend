@@ -153,7 +153,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
         'current_user': 'social.serializers.CustomUserSerializer',
-        'user': 'social.serializers.CustomUserSerializer',
+        'user': 'social.serializers.CustomUserListSerializer',
         'user_create': 'social.serializers.CustomUserCreateSerializer',
     },
     'HIDE_USERS': False,
