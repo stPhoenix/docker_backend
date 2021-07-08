@@ -7,7 +7,7 @@ class IsAuthorOrReadOnlyPermission(BasePermission):
         if request.method in SAFE_METHODS:
             condition = True
         elif request.method in ("PUT", "POST", "UPDATE", "DELETE"):
-            condition = request.user == obj
+            condition = request.user == obj.author
         
         return condition
 
