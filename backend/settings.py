@@ -131,6 +131,8 @@ USE_TZ = True
 
 STATIC_URL = '/api/static/'
 
+MEDIA_URL = '/api/media/'
+
 MEDIA_ROOT = Path.joinpath(BASE_DIR, 'media/')
 
 # Default primary key field type
@@ -153,7 +155,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
         'current_user': 'social.serializers.CustomUserSerializer',
-        'user': 'social.serializers.CustomUserSerializer',
+        'user': 'social.serializers.CustomUserListSerializer',
         'user_create': 'social.serializers.CustomUserCreateSerializer',
     },
     'HIDE_USERS': False,
