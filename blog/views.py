@@ -84,9 +84,10 @@ class CommentViewSet(BasePostAdditionViewSet):
 
     def get_queryset(self):
         if self.action == "post_comments":
-            return CommentModel.objects.filter(
-                author=self.request.user, post=self.request.pk
-            )
+            # return CommentModel.objects.filter(
+            #     author=self.request.user, post=self.request.pk
+            # )
+            return CommentModel.objects.filter(post__author__in=self.request.user.subscriptions.all()).filter(post=self.request.pk)
         return CommentModel.objects.filter(author=self.request.user)
 
     @action(detail=False, url_path="post/(?P<pk>[^/.]+)")
