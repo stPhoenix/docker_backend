@@ -74,8 +74,8 @@ class BasePostAdditionViewSet(ModelViewSet):
         serializer.validated_data["author"] = self.request.user
         if not isSubscriberPermission(
             serializer.validated_data["post"].author, request=self.request
-        ):
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        ) and serializer.validated_data["post"].author != self.request.user:
+            raise ValidationError("You're not alowed to do that")
         return super().perform_create(serializer)
 
 
