@@ -87,10 +87,19 @@ class CommentViewSet(BasePostAdditionViewSet):
             return CommentModel.objects.filter(
                 post__author__in=self.request.user.subscriptions.all()
             ).filter(post=self.request.pk)
+        elif self.action == "my_post_comments":
+            return CommentModel.objects.filter(post__author=self.request.user).filter(
+                post=self.request.pk
+            )
         return CommentModel.objects.filter(author=self.request.user)
 
     @action(detail=False, url_path="post/(?P<pk>[^/.]+)")
     def post_comments(self, request, pk=None):
+        self.request.pk = pk
+        return self.list(request)
+
+    @action(detail=False, url_path="my/post/(?P<pk>[^/.]+)")
+    def my_post_comments(self, request, pk=None):
         self.request.pk = pk
         return self.list(request)
 
