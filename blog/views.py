@@ -74,8 +74,8 @@ class BasePostAdditionViewSet(ModelViewSet):
         serializer.validated_data["author"] = self.request.user
         if not isSubscriberPermission(
             serializer.validated_data["post"].author, request=self.request
-        ):
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        ) and serializer.validated_data["post"].author != self.request.user:
+            raise ValidationError("You're not alowed to do that")
         return super().perform_create(serializer)
 
 
@@ -85,12 +85,21 @@ class CommentViewSet(BasePostAdditionViewSet):
     def get_queryset(self):
         if self.action == "post_comments":
             return CommentModel.objects.filter(
-                author=self.request.user, post=self.request.pk
+                post__author__in=self.request.user.subscriptions.all()
+            ).filter(post=self.request.pk)
+        elif self.action == "my_post_comments":
+            return CommentModel.objects.filter(post__author=self.request.user).filter(
+                post=self.request.pk
             )
         return CommentModel.objects.filter(author=self.request.user)
 
     @action(detail=False, url_path="post/(?P<pk>[^/.]+)")
     def post_comments(self, request, pk=None):
+        self.request.pk = pk
+        return self.list(request)
+
+    @action(detail=False, url_path="my/post/(?P<pk>[^/.]+)")
+    def my_post_comments(self, request, pk=None):
         self.request.pk = pk
         return self.list(request)
 
