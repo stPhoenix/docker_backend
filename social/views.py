@@ -1,13 +1,15 @@
 from rest_framework import serializers, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from social.models import SubscriptionRequestModel, UserModel
 from social.permissions import IsAuthorOrReadOnlyPermission, IsTargetPermission
 from social.serializers import (
-    SubscriptionRequestSerializer,
+    CustomUserListSerializer,
     MySubscriptionRequestSerializer,
+    SubscriptionRequestSerializer,
     ToMeSubscriptionRequestSerializer,
 )
 
@@ -67,3 +69,18 @@ class ToMeSubsRequestsViewSet(SubscriptionRequestBaseViewSet):
 
     def get_queryset(self):
         return self.request.user.subscription_requests.all()
+
+
+class SearchUserViewSet(ReadOnlyModelViewSet):
+    serializer_class = CustomUserListSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.action == "search":
+            return UserModel.objects.filter(username__contains=self.request.name_string)
+        return UserModel.objects.all()
+
+    @action(detail=False, url_path="user/(?P<name_string>[^/.]+)")
+    def search(self, request, name_string=None):
+        self.request.name_string = name_string
+        return self.list(request)
