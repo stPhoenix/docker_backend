@@ -12,10 +12,12 @@ phases:
     commands:
       - echo CodeBuild URL $CODEBUILD_BUILD_URL
       - echo Building the $SERVER_REPO_NAME Docker image...
-      - docker build -t trainee_backend . --target production
+      - docker build -t trainee_backend --target production .
   post_build:
     commands:
       - echo Build completed on `date -Ins -u`
       - echo Pushing built Docker images...
       - docker tag trainee_backend:latest 096085967110.dkr.ecr.us-east-2.amazonaws.com/trainee_backend:latest
       - docker push 096085967110.dkr.ecr.us-east-2.amazonaws.com/trainee_backend:latest
+artifacts:
+  OverrideArtifactName: True
