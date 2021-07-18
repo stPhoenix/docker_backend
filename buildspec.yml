@@ -20,4 +20,9 @@ phases:
       - docker tag trainee_backend:latest 096085967110.dkr.ecr.us-east-2.amazonaws.com/trainee_backend:latest
       - docker push 096085967110.dkr.ecr.us-east-2.amazonaws.com/trainee_backend:latest
 artifacts:
-  OverrideArtifactName: True
+  secondary-artifacts:
+    backend:
+      files:
+        - '**/*'
+      base-directory: 'deploy/'
+      discard-paths: no
