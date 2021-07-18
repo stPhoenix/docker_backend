@@ -24,4 +24,4 @@ artifacts:
     - '**/*'
   base-directory: 'deploy/'
   discard-paths: no
-  name: 'deploy'
+  name: Deploy
