@@ -11,7 +11,7 @@ phases:
   build:
     commands:
       - echo Starting docker daemon
-      - dockerd
+      - sudo dockerd
       - echo CodeBuild URL $CODEBUILD_BUILD_URL
       - echo Building the $SERVER_REPO_NAME Docker image...
       - docker build -t trainee_backend --target production .
