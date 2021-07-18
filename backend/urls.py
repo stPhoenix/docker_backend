@@ -19,11 +19,9 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 
-
 urlpatterns = [
-    path('/', admin.site.urls),
-    path('api/web/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/social/', include("social.urls")),
-    path('api/blog/', include('blog.urls')),
-
+    path("api/web/", include("rest_framework.urls", namespace="rest_framework")),
+    path("api/social/", include("social.urls")),
+    path("api/blog/", include("blog.urls")),
+    path("admin/", admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
