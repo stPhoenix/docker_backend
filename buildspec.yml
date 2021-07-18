@@ -7,7 +7,7 @@ phases:
   pre_build:
     commands:
       - echo Logging into ECR...
-      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 096085967110.dkr.ecr.us-east-2.amazonaws.com
+      - docker login --username AWS -p $(aws ecr get-login-password --region us-east-2) 096085967110.dkr.ecr.us-east-2.amazonaws.com
   build:
     commands:
       - echo CodeBuild URL $CODEBUILD_BUILD_URL
