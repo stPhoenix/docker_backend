@@ -154,8 +154,8 @@ if USE_AWS_FOR_MEDIA:
 if USE_AWS_FOR_STATIC:
     STATICFILES_STORAGE = "commons.storages.S3StaticStorage"
 
-AWS_S3_STATIC_BUCKET_NAME = env.str("AWS_S3_STATIC_BUCKET_NAME")
-AWS_S3_MEDIA_BUCKET_NAME = env.str("AWS_S3_MEDIA_BUCKET_NAME")
+AWS_S3_STATIC_BUCKET_NAME = env.str("AWS_S3_STATIC_BUCKET_NAME", None)
+AWS_S3_MEDIA_BUCKET_NAME = env.str("AWS_S3_MEDIA_BUCKET_NAME", None)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
